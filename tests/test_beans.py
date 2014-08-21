@@ -51,6 +51,7 @@ def test_nested_schema():
     class TestBean(object):
         list_node = [TestNestedBean()]
         dict_node = {str(): int()}
+        tuple_node = (str(), float(), [int()])
 
     test_data = {
         'list_node': [
@@ -66,8 +67,17 @@ def test_nested_schema():
         ],
         'dict_node': {
             'apple': 1,
-            'orange':2
+            'orange': 2,
         },
+        'tuple_node': [
+            'bla',
+            4.5,
+            [
+                3,
+                2,
+                1
+            ],
+        ],
     }
 
     empty_test_bean = dict_to_bean(test_data, TestBean)
@@ -77,6 +87,7 @@ def test_nested_schema():
         assert empty_test_bean.list_node[i].int_node == i + 1
     assert empty_test_bean.dict_node['apple'] == 1
     assert empty_test_bean.dict_node['orange'] == 2
+    assert empty_test_bean.tuple_node == ('bla', 4.5, [3, 2, 1])
     assert test_data == bean_to_dict(empty_test_bean)
 
 

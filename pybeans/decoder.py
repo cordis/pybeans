@@ -18,6 +18,7 @@ class SchemaDecoder(object):
             BoolNode: instance._visit_value,
             FloatNode: instance._visit_value,
             DecimalNode: instance._visit_value,
+            TupleNode: instance._visit_tuple,
             ListNode: instance._visit_list,
             DictNode: instance._visit_dict,
             BeanNode: instance._visit_bean,
@@ -50,6 +51,12 @@ class SchemaDecoder(object):
         if node.decode:
             value = node.decode(value)
         return value
+
+    def _visit_tuple(self, node, value):
+        ret = []
+        for item, item_node in zip(value, node.node_list):
+            ret.append(self._visit_node(item_node, item))
+        return self._visit_value(node, value)
 
     def _visit_list(self, node, value):
         ret = []

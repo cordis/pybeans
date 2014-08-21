@@ -21,14 +21,6 @@ class Schema(object):
     }
 
     @classmethod
-    def decode_registry(cls, data, args_getter, registry):
-        return cls.__decoder__(Registry(args_getter, registry), data)
-
-    @classmethod
-    def encode_registry(cls, obj, registry):
-        return cls.__encoder__(Registry(None, registry), obj)
-
-    @classmethod
     def decode(cls, data, bean):
         return cls.__decoder__(BeanNode(bean), data)
 
@@ -54,6 +46,11 @@ class Schema(object):
             return self.equal_type_map[attr_type](default=default)
         except KeyError:
             pass
+        if attr_type == tuple:
+            item_node_list = []
+            for index, item in enumerate(attr):
+                item_node_list.append(self._create_node(name + '[{0}]'.format(index), item))
+            return TupleNode(item_node_list, default=default)
         if attr_type == list:
             assert len(attr) == 1, '{0} list must content only item type'.format(name)
             item_node = self._create_node(name + '[item]', attr[0])

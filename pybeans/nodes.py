@@ -11,10 +11,11 @@ __all__ = [
     'BoolNode',
     'FloatNode',
     'DecimalNode',
-    'BeanNode',
-    'Registry',
+    'TupleNode',
     'ListNode',
     'DictNode',
+    'BeanNode',
+    'Registry',
 ]
 
 
@@ -49,6 +50,15 @@ class FloatNode(AnyNode):
 class DecimalNode(AnyNode):
     decode = Decimal
     encode = str
+
+
+class TupleNode(AnyNode):
+    decode = tuple
+    encode = list
+
+    def __init__(self, node_list, **kwargs):
+        super(TupleNode, self).__init__(**kwargs)
+        self.node_list = node_list
 
 
 class ListNode(AnyNode):

@@ -16,6 +16,7 @@ class SchemaEncoder(object):
             BoolNode: instance._visit_value,
             FloatNode: instance._visit_value,
             DecimalNode: instance._visit_value,
+            TupleNode: instance._visit_tuple,
             ListNode: instance._visit_list,
             DictNode: instance._visit_dict,
             BeanNode: instance._visit_bean,
@@ -36,6 +37,13 @@ class SchemaEncoder(object):
         if node.encode:
             value = node.encode(value)
         return value
+
+    def _visit_tuple(self, node, value, data):
+        assert not data
+        ret = []
+        for item, item_node in zip(value, node.node_list):
+            ret.append(self._visit_node(item_node, item, {}))
+        return self._visit_value(node, value, data)
 
     def _visit_list(self, node, value, data):
         if not data:
