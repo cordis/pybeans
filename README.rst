@@ -2,7 +2,7 @@
 PyBeans
 =======
 
-This is yet another attempt to simplify encoding/decoding of dicts and simply python objects.
+This is yet another attempt to simplify encoding/decoding of dicts and pure python objects.
 The work is still in progress. Use at your own risk.
 
 Plain schema usage
