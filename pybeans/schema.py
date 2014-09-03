@@ -61,7 +61,7 @@ class Schema(object):
             key_node, value_node = map(partial(self._create_node, name + '{key: value}'), attr_items[0])
             return DictNode(key_node, value_node, default=default)
         if hasattr(attr_type, '__pybeansschema__'):
-            return BeanNode(attr)
+            return BeanNode(attr, default=default)
         raise NotImplementedError('{0} type is not implemented'.format(name))
 
     def get_nodes(self):

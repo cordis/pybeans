@@ -5,7 +5,7 @@ from pybeans import bean, dict_to_bean, bean_to_dict
 
 
 def test_plain_schema():
-    default_node_value = 10
+    default_node_value = 5
     unicode_node_value = u'Unicode строка'
     str_node_value = 'just a string'
     int_node_value = 10
@@ -43,12 +43,13 @@ def test_plain_schema():
 
 
 def test_nested_schema():
-    @bean
+    @bean(int_node=4)
     class TestNestedBean(object):
         int_node = int()
 
-    @bean
+    @bean(item_node={})
     class TestBean(object):
+        item_node = TestNestedBean()
         list_node = [TestNestedBean()]
         dict_node = {str(): int()}
         tuple_node = (str(), float(), [int()])
@@ -88,7 +89,7 @@ def test_nested_schema():
     assert empty_test_bean.dict_node['apple'] == 1
     assert empty_test_bean.dict_node['orange'] == 2
     assert empty_test_bean.tuple_node == ('bla', 4.5, [3, 2, 1])
-    assert test_data == bean_to_dict(empty_test_bean)
+    assert dict(test_data.items() + [('item_node', {'int_node': 4})]) == bean_to_dict(empty_test_bean)
 
 
 if __name__ == '__main__':

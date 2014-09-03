@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pybeans',
-    version='0.20.0',
+    version='0.20.1',
     packages=find_packages(),
     author='CordiS',
     author_email='cordis@game-mafia.ru',
