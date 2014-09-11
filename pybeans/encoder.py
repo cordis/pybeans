@@ -63,6 +63,8 @@ class SchemaEncoder(object):
             raise EncodingException('{0} is not defined'.format(attr))
         if value is None:
             return value
+        if value is NotImplemented:
+            value = node.default
         visitor = self._get_visitor(node)
         return visitor(node, value, data)
 

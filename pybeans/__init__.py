@@ -1,3 +1,4 @@
+from pybeans.const import UNDEFINED
 from pybeans.schema import Schema
 from pybeans.exceptions import *
 
@@ -5,6 +6,8 @@ from pybeans.exceptions import *
 def bean(_=None, **defaults):
     def _bean(cls):
         cls.__pybeansschema__ = Schema(cls.__dict__, defaults)
+        for name, node in cls.__pybeansschema__.get_nodes():
+            setattr(cls, name, NotImplemented)
         return cls
 
     if _ is not None:
