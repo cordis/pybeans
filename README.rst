@@ -105,7 +105,8 @@ Nested schema usage
     assert empty_test_bean.dict_node['apple'] == 1
     assert empty_test_bean.dict_node['orange'] == 2
     assert empty_test_bean.tuple_node == ('bla', 4.5, [3, 2, 1])
-    assert dict(test_data.items() + [('item_node', {'int_node': 4})]) == bean_to_dict(empty_test_bean)
+    dict_with_defaults = dict(test_data.items() + [('item_node', {'int_node': 4})])
+    assert dict_with_defaults == bean_to_dict(empty_test_bean)
 
 
 Schema defaults usage
