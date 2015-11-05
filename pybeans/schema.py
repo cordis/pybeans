@@ -11,7 +11,7 @@ class Schema(object):
     __decoder__ = SchemaDecoder.create_instance()
     __encoder__ = SchemaEncoder.create_instance()
 
-    equal_type_map = {
+    attr_type_to_node_type_map = {
         str: StrNode,
         unicode: UnicodeNode,
         int: IntNode,
@@ -43,26 +43,35 @@ class Schema(object):
     def _create_node(self, name, attr, default=UNDEFINED):
         attr_type = type(attr)
         try:
-            return self.equal_type_map[attr_type](default=default)
+            return self.attr_type_to_node_type_map[attr_type](default=default)
         except KeyError:
             pass
         if attr_type == tuple:
-            item_node_list = []
-            for index, item in enumerate(attr):
-                item_node_list.append(self._create_node(name + '[{0}]'.format(index), item))
-            return TupleNode(item_node_list, default=default)
+            return self._create_tuple_node(name, attr, default)
         if attr_type == list:
-            assert len(attr) == 1, '{0} list must content only item type'.format(name)
-            item_node = self._create_node(name + '[item]', attr[0])
-            return ListNode(item_node, default=default)
+            return self._create_list_node(name, attr, default)
         if attr_type == dict:
-            attr_items = attr.items()
-            assert len(attr_items) == 1, '{0} dict must content only key and value types'.format(name)
-            key_node, value_node = map(partial(self._create_node, name + '{key: value}'), attr_items[0])
-            return DictNode(key_node, value_node, default=default)
+            return self._create_dict_node(name, attr, default)
         if hasattr(attr_type, '__pybeansschema__'):
             return BeanNode(attr, default=default)
         raise NotImplementedError('{0} type is not implemented'.format(name))
+
+    def _create_tuple_node(self, name, attr, default):
+        item_node_list = []
+        for index, item in enumerate(attr):
+            item_node_list.append(self._create_node(name + '[{0}]'.format(index), item))
+        return TupleNode(item_node_list, default=default)
+
+    def _create_list_node(self, name, attr, default):
+        assert len(attr) == 1, '{0} list must content only item type'.format(name)
+        item_node = self._create_node(name + '[item]', attr[0])
+        return ListNode(item_node, default=default)
+
+    def _create_dict_node(self, name, attr, default):
+        attr_items = attr.items()
+        assert len(attr_items) == 1, '{0} dict must content only key and value types'.format(name)
+        key_node, value_node = map(partial(self._create_node, name + '{key: value}'), attr_items[0])
+        return DictNode(key_node, value_node, default=default)
 
     def get_nodes(self):
         return self.node_dict.items()
