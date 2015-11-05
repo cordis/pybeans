@@ -15,11 +15,11 @@ def bean(_=None, **defaults):
 
 def bean_to_dict(source, target=None):
     """
-    @param source: bean object or class
-    @type target: C{dict}
-    @rtype: C{dict}
-    @returns: full filled target
-    @raises L{pybeans.exceptions.EncodingError}
+    :param source: bean object or class
+    :type target: dict or None
+    :returns: full filled target
+    :rtype: dict
+    :raises pybeans.exceptions.EncodingError
     """
     if target is None:
         target = {}
@@ -28,10 +28,12 @@ def bean_to_dict(source, target=None):
 
 def dict_to_bean(source, target):
     """
-    @type source: C{dict}
-    @param target: bean object or class
-    @returns: full filled target
-    @raises L{pybeans.exceptions.EncodingError}
+    :type source: dict
+    :param target: bean object or class
+    :type target: type or T
+    :returns: initialized instance of target
+    :rtype: T
+    :raises pybeans.exceptions.DecodingError
     """
     if isinstance(target, type):
         target = target()
