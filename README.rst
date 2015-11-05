@@ -13,7 +13,7 @@ Plain schema usage
     from decimal import Decimal
     from pybeans import bean, dict_to_bean, bean_to_dict
 
-    default_node_value = 10
+    default_node_value = 5
     unicode_node_value = u'Unicode строка'
     str_node_value = 'just a string'
     int_node_value = 10
@@ -55,12 +55,16 @@ Nested schema usage
 
 .. code-block:: python
 
-    @bean
+    from decimal import Decimal
+    from pybeans import bean, dict_to_bean, bean_to_dict
+
+    @bean(int_node=4)
     class TestNestedBean(object):
         int_node = int()
 
-    @bean
+    @bean(item_node={})
     class TestBean(object):
+        item_node = TestNestedBean()
         list_node = [TestNestedBean()]
         dict_node = {str(): int()}
         tuple_node = (str(), float(), [int()])
@@ -94,10 +98,44 @@ Nested schema usage
 
     empty_test_bean = dict_to_bean(test_data, TestBean)
     assert isinstance(empty_test_bean, TestBean)
+    assert isinstance(empty_test_bean, TestBean)
     for i in range(3):
         assert isinstance(empty_test_bean.list_node[i], TestNestedBean)
         assert empty_test_bean.list_node[i].int_node == i + 1
     assert empty_test_bean.dict_node['apple'] == 1
     assert empty_test_bean.dict_node['orange'] == 2
     assert empty_test_bean.tuple_node == ('bla', 4.5, [3, 2, 1])
-    assert test_data == bean_to_dict(empty_test_bean)
+    assert dict(test_data.items() + [('item_node', {'int_node': 4})]) == bean_to_dict(empty_test_bean)
+
+
+Schema defaults usage
+=====
+
+.. code-block:: python
+
+    from decimal import Decimal
+    from pybeans import bean, dict_to_bean, bean_to_dict
+
+    @bean(int_node=4)
+    class TestNestedBean(object):
+        int_node = int()
+
+    @bean(item_node={}, list_node=[], dict_node={'a': 1})
+    class TestBean(object):
+        item_node = TestNestedBean()
+        list_node = [TestNestedBean()]
+        dict_node = {str(): int()}
+
+    test_bean = TestBean()
+    assert bean_to_dict(test_bean) == {
+        'item_node': {
+            'int_node': 4,
+        },
+        'list_node': [],
+        'dict_node': {'a': 1}
+    }
+    test_bean = dict_to_bean({}, TestBean)
+    assert isinstance(test_bean.item_node, TestNestedBean)
+    assert test_bean.item_node.int_node == 4
+    assert test_bean.list_node == []
+    assert test_bean.dict_node == {'a': 1}
